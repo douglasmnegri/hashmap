@@ -13,16 +13,31 @@ class HashMap {
     for (let i = 0; i < key.length; i++) {
       hashCode = primeNumber * hashCode + key.charCodeAt(i);
     }
+
+    console.log(hashCode % 16);
     return hashCode % 16;
   }
 
   set(key, value) {
+    if (this.growBuckets > this.loadFactor) {
+      console.log("You need to grow bucket sizes");
+      return;
+    }
+
     let index = this.hash(key);
     if (!this.buckets[index]) {
       this.buckets[index] = [];
+      this.growBuckets++;
     }
+
+    for (let i = 0; i < this.buckets[index].length; i++) {
+      if (this.buckets[index][i].key === key) {
+        this.buckets[index][i].value = value;
+        return;
+      }
+    }
+
     this.buckets[index].push({ key, value });
-    this.growBuckets++;
   }
 
   get(key) {
@@ -122,6 +137,10 @@ class HashMap {
       }
     }
     return arrayOfEntries;
+  }
+
+  print() {
+    console.log(this.buckets);
   }
 }
 
